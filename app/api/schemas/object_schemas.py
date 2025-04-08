@@ -22,10 +22,11 @@ class ObjectReturn(Object):
     created_at: datetime
     user_id: int
     id: int
+    main_object_id: int
 
 
 class ObjectUpdateParameters(Object):
-    id: int
+    main_object_id: int
     user_id: int
 
 
@@ -39,3 +40,4 @@ class AllObjectReturn(BaseModel):
     file: str | None = None
     # photo: str | None = None
     id: int
+    main_object_id: int

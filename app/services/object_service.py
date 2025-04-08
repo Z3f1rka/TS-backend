@@ -36,14 +36,14 @@ class ObjectService:
 
     async def update(self, object: ObjectUpdateParameters, user_id: int):
         async with self.uow:
-            object = await self.uow.objects.find_by_id(object.id)
-            if not object:
+            db_object = await self.uow.objects.find_by_main_object_id(object.main_object_id)
+            if not db_object:
                 raise HTTPException(400, "Такого объекта не существует")
             if object.user_id == user_id:
                 """if object.status == "check":
                     raise HTTPException(400, "объект находится на проверке")"""
                 await self.uow.objects.update(title=object.title, file=object.file,
-                                              id=object.id, user_id=object.user_id)
+                                              id=object.main_object_id, user_id=object.user_id)
                 await self.uow.commit()
             else:
                 raise HTTPException(403, "Пользователь не является владельцем объекта")
@@ -82,10 +82,11 @@ class ObjectService:
 
     async def delete_object(self, object_id: int, user_id: int):
         async with self.uow:
-            db_object = await self.uow.objects.find_by_id(object_id)
+            db_object = await self.uow.objects.find_all_by_main_object_id(object_id)
             if not db_object:
                 raise HTTPException(400, "Такого объекта не существует")
-            if db_object.user_id != user_id:
+            if db_object[0].user_id != user_id:
                 raise HTTPException(403, "Пользователь не является владельцем объекта")
-            await self.uow.objects.del_one(id=db_object.id)
+            for object in db_object:
+                await self.uow.objects.del_one(id=object.id)
             await self.uow.commit()

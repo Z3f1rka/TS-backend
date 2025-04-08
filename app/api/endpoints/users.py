@@ -52,7 +52,6 @@ async def login(
 @router.post("/docs/login")
 async def docs_login(
         user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service),
-        # noqa
 ) -> UserLogInResponse:  # noqa
     access_token, refresh_token = await user_service.login(email=user.username, password=user.password)
     response = UserLogInResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")
@@ -112,3 +111,9 @@ async def get(jwt_access: Annotated[str, Depends(get_jwt_payload)],  # noqa
 async def get(user_id: int,  # noqa
               user_service: UserService = Depends(get_user_service)) -> List[UserFavoritesGet]:  # noqa
     return await user_service.get_favotries(user_id)
+
+  
+@router.post("/get_premium")
+async def get_premium(jwt_access: Annotated[str, Depends(get_jwt_payload)], tier: int,  # noqa
+                      user_service: UserService = Depends(get_user_service)):  # noqa
+    await user_service.add_privelegy(id=int(jwt_access["sub"]), tier=tier)

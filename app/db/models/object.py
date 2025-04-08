@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, Integer
+from sqlalchemy import BigInteger
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
 from sqlalchemy import String
 # from sqlalchemy import Text
 from sqlalchemy.orm import Mapped

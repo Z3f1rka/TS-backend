@@ -38,7 +38,7 @@ class ObjectRepository(Repository):
         if not object:
             return
         return object
-    
+
     async def find_all_by_main_object_id(self, object_id):
         stmt = select(self.model).where(self.model.main_object_id == object_id).order_by(self.model.version.desc())
         objects = await self.session.execute(stmt)

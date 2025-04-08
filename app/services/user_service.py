@@ -65,7 +65,7 @@ class UserService:
     async def add_favorites(self, user_id: int, object_id: int):
         async with self.uow:
             try:
-                user = await self.uow.users.find_one(id=user_id) # noqa
+                user = await self.uow.users.find_one(id=user_id)  # noqa
             except NoResultFound:
                 raise HTTPException(400, "Пользователя не существует")
             try:
@@ -81,7 +81,7 @@ class UserService:
     async def delete_favorites(self, user_id: int, object_id: int):
         async with self.uow:
             try:
-                user = await self.uow.users.find_one(id=user_id) # noqa
+                user = await self.uow.users.find_one(id=user_id)  # noqa
             except NoResultFound:
                 raise HTTPException(400, "Пользователя не существует")
             favorites = await self.uow.users.get_favorites(user_id)
@@ -90,17 +90,15 @@ class UserService:
             await self.uow.users.delete_favorite(user_id, object_id)
             await self.uow.commit()
 
-            
     async def get_favotries(self, user_id: int):
         async with self.uow:
             try:
-                user = await self.uow.users.find_one(id=user_id) # noqa
+                user = await self.uow.users.find_one(id=user_id)  # noqa
             except NoResultFound:
                 raise HTTPException(400, "Пользователя не существует")
             objects = await self.uow.users.get_favorites(user_id)
             return [UserFavoritesGet.model_validate(i).model_dump() for i in objects]
 
-          
     async def add_privelegy(self, id: int, tier: int):
         async with self.uow:
             try:

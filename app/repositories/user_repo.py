@@ -45,7 +45,6 @@ class UserRepository(Repository):
         user.email = email
         self.session.add(user)
 
-        
     async def add_favorites(self, user_id: int, object_id: int):
         stmt = select(Object).where(Object.main_object_id == object_id)
         routes = (await self.session.execute(stmt)).scalars().first()
@@ -72,7 +71,6 @@ class UserRepository(Repository):
             i.object = object
         return user_favorite
 
-      
     async def add_privelegy(self, id: int, tier: int):
         stmt = select(self.model).where(self.model.id == id)
         user = (await self.session.execute(stmt)).scalars().first()

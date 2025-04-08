@@ -112,7 +112,7 @@ async def get(user_id: int,  # noqa
               user_service: UserService = Depends(get_user_service)) -> List[UserFavoritesGet]:  # noqa
     return await user_service.get_favotries(user_id)
 
-  
+
 @router.post("/get_premium")
 async def get_premium(jwt_access: Annotated[str, Depends(get_jwt_payload)], tier: int,  # noqa
                       user_service: UserService = Depends(get_user_service)):  # noqa

@@ -13,7 +13,7 @@ class UserRepository(Repository):
     async def add_user(self, username: str, email: str, password: str):
         try:
             result = await super().add_one(
-                {"username": username, "email": email, "hashed_password": get_password_hash(password), "role": "user"},
+                {"username": username, "email": email, "hashed_password": get_password_hash(password)},
             )
             return result.id
         except IntegrityError:
@@ -39,4 +39,10 @@ class UserRepository(Repository):
         user.avatar = avatar
         user.username = username
         user.email = email
+        self.session.add(user)
+
+    async def add_privelegy(self, id: int, tier: int):
+        stmt = select(self.model).where(self.model.id == id)
+        user = (await self.session.execute(stmt)).scalars().first()
+        user.role = "tier" + str(tier)
         self.session.add(user)

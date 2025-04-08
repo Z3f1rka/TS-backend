@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import NoResultFound
 
+from app.api.schemas import UserFavoritesGet
 from app.api.schemas import UserGetResponse
-from app.api.schemas import UserUpdateParameters
 from app.utils import create_token
 from app.utils import verify_password
 from app.utils.unitofwork import IUnitOfWork
@@ -62,15 +62,45 @@ class UserService:
         else:
             raise HTTPException(400, "Не валидный токен")
 
-    async def update_user(self, id: int, user: UserUpdateParameters):
+    async def add_favorites(self, user_id: int, object_id: int):
         async with self.uow:
             try:
-                await self.uow.users.find_one(id=id)
-            except Exception:
-                raise HTTPException(400, "Такого пользователя не существует")
-            await self.uow.users.update_user(id=id, username=user.username, email=user.email, avatar=user.avatar)
+                user = await self.uow.users.find_one(id=user_id) # noqa
+            except NoResultFound:
+                raise HTTPException(400, "Пользователя не существует")
+            try:
+                favorites = await self.uow.users.get_favorites(user_id)  # noqa
+                if any(i.route_id == object_id for i in favorites):
+                    raise HTTPException(400, "Пользователь уже добавил маршрут в избранное")
+                else:
+                    await self.uow.users.add_favorites(user_id, object_id)
+                await self.uow.commit()
+            except NoResultFound:
+                raise HTTPException(400, "Маршрут не найден")
+
+    async def delete_favorites(self, user_id: int, object_id: int):
+        async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id) # noqa
+            except NoResultFound:
+                raise HTTPException(400, "Пользователя не существует")
+            favorites = await self.uow.users.get_favorites(user_id)
+            if not any((i.user_id == user_id and i.object_id == object_id) for i in favorites):
+                raise HTTPException(400, "У пользователя нет такого маршрута в избранных")
+            await self.uow.users.delete_favorite(user_id, object_id)
             await self.uow.commit()
 
+            
+    async def get_favotries(self, user_id: int):
+        async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id) # noqa
+            except NoResultFound:
+                raise HTTPException(400, "Пользователя не существует")
+            objects = await self.uow.users.get_favorites(user_id)
+            return [UserFavoritesGet.model_validate(i).model_dump() for i in objects]
+
+          
     async def add_privelegy(self, id: int, tier: int):
         async with self.uow:
             try:

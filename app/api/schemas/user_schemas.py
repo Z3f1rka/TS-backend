@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import EmailStr
 
+from app.api.schemas import ObjectReturn
+
 
 class UserCreateResponse(BaseModel):
     access_token: str
@@ -42,3 +44,10 @@ class UserUpdateParameters(BaseModel):
     username: str
     email: EmailStr
     avatar: str | None = None
+
+
+class UserFavoritesGet(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    user_id: int
+    object_id: int
+    object: ObjectReturn

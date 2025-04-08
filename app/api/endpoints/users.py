@@ -1,13 +1,15 @@
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Query
+from fastapi import status
 from fastapi.params import Header
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.schemas import UserCreateParameters
 from app.api.schemas import UserCreateResponse
+from app.api.schemas import UserFavoritesGet
 from app.api.schemas import UserGetResponse
 from app.api.schemas import UserLogInParameters
 from app.api.schemas import UserLogInResponse
@@ -87,6 +89,30 @@ async def update_user(jwt_access: Annotated[str, Depends(get_jwt_payload)], user
     return
 
 
+@router.post("/favorites/add", status_code=status.HTTP_201_CREATED)
+async def add_favorites(jwt_access: Annotated[str, Depends(get_jwt_payload)], object_id: int,  # noqa
+                        user_service: UserService = Depends(get_user_service)):  # noqa
+    await user_service.add_favorites(int(jwt_access["sub"]), object_id)
+
+
+@router.delete("/favorites/delete", status_code=status.HTTP_202_ACCEPTED)
+async def add_favorites(jwt_access: Annotated[str, Depends(get_jwt_payload)], object_id: int,  # noqa
+                        user_service: UserService = Depends(get_user_service)):  # noqa
+    await user_service.delete_favorites(int(jwt_access["sub"]), object_id)
+
+
+@router.get("/favorites/fetch")
+async def get(jwt_access: Annotated[str, Depends(get_jwt_payload)],  # noqa
+              user_service: UserService = Depends(get_user_service)) -> List[UserFavoritesGet]:  # noqa
+    return await user_service.get_favotries(int(jwt_access["sub"]))
+
+
+@router.get("/favorites/fetch/other")
+async def get(user_id: int,  # noqa
+              user_service: UserService = Depends(get_user_service)) -> List[UserFavoritesGet]:  # noqa
+    return await user_service.get_favotries(user_id)
+
+  
 @router.post("/get_premium")
 async def get_premium(jwt_access: Annotated[str, Depends(get_jwt_payload)], tier: int,  # noqa
                       user_service: UserService = Depends(get_user_service)):  # noqa

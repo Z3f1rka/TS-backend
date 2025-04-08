@@ -49,11 +49,11 @@ class ObjectService:
             else:
                 raise HTTPException(403, "Пользователь не является владельцем объекта")
 
-    async def get_all_public_objects(self):
+    """async def get_all_public_objects(self):
         async with self.uow:
             objects = await self.uow.objects.find_all_public_objects()
             return [AllObjectReturn.model_validate(i) for i in objects]
-
+"""
     async def get_all_user_objects(self, user_id: int, user: int):
         async with self.uow:
             if user_id != user:

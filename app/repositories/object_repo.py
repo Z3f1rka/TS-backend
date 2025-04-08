@@ -19,18 +19,31 @@ class ObjectRepository(Repository):
         return object_id
 
     async def update(self, title: str, id: int, user_id: int, file: str | None = None):
-        stmt = update(self.model).where(self.model.id == id).values(**{"title": title,
-                                                                       "file": file,
-                                                                       "id": id,
-                                                                       "user_id": user_id})
+        stmt = select(self.model).where(self.model.main_object_id == id).order_by(self.model.version.desc())
+        object = await self.session.execute(stmt)
+        object = object.scalars().first()
+        version = object.version
+        stmt = insert(self.model).values(**{"title": title,
+                                            "file": file,
+                                            "main_object_id": id,
+                                            "user_id": user_id,
+                                            "version": version + 1})
         await self.session.execute(stmt)
         await self.session.commit()
 
-    async def find_by_id(self, object_id):
-        stmt = select(self.model).where(self.model.id == object_id)
+    async def find_by_main_object_id(self, object_id):
+        stmt = select(self.model).where(self.model.main_object_id == object_id).order_by(self.model.version.desc())
         object = await self.session.execute(stmt)
         object = object.scalars().first()
+        if not object:
+            return
         return object
+    
+    async def find_all_by_main_object_id(self, object_id):
+        stmt = select(self.model).where(self.model.main_object_id == object_id).order_by(self.model.version.desc())
+        objects = await self.session.execute(stmt)
+        objects = objects.scalars().all()
+        return objects
 
     """async def find_by_id_private(self, object_id: int):
         stmt = select(self.model).where(self.model.id == object_id)

@@ -38,21 +38,18 @@ async def update(jwt_access: Annotated[str, Depends(get_jwt_payload)], object: O
 """@router.get("/get_by_id_private")
 async def get_private(object_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)],
                       service: ObjectService = Depends(get_object_service)) -> ObjectReturn:  # noqa
-    """Получение приватного объекта пользователя."""
     object = await service.get_private_object_by_id(object_id, user_id=int(jwt_access["sub"]))
     return object
 
 
 @router.get("/get_by_id_public")
 async def get_public(object_id: int, service: ObjectService = Depends(get_object_service)) -> ObjectReturn:  # noqa
-    """Получение одного публичного объекта"""
     object = await service.get_public_object_by_id(object_id)
     return object
 
 
 @router.get('/all_public_objects')
 async def get_all_objects(service: ObjectService = Depends(get_object_service)) -> list[AllObjectReturn]:  # noqa
-    """Получение всех публичных объектов"""
     objects = await service.get_all_public_objects()
     return objects"""
 
@@ -69,7 +66,6 @@ async def get_all_user_objects(user_id: int, jwt_access: Annotated[str, Depends(
 """@router.get('/all_user_public_objects')
 async def get_all_user_public_objects(user_id: int, service: ObjectService = Depends(get_object_service)) -> list[ # noqa
     ObjectReturn]:  # noqa
-    """Получение всех опубликованных объектов пользователя"""
     objects = await service.get_all_user_public_objects(user_id)
     return objects"""
 

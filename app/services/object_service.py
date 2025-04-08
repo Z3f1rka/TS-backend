@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 
-from app.api.schemas.object_schemas import AllObjectReturn
 from app.api.schemas.object_schemas import ObjectReturn
 from app.api.schemas.object_schemas import ObjectUpdateParameters
 from app.utils.unitofwork import IUnitOfWork
@@ -37,13 +36,13 @@ class ObjectService:
 
     async def update(self, object: ObjectUpdateParameters, user_id: int):
         async with self.uow:
-            object = await self.uow.objects.find_by_id_private(object.id)
+            object = await self.uow.objects.find_by_id(object.id)
             if not object:
                 raise HTTPException(400, "Такого объекта не существует")
             if object.user_id == user_id:
-                if object.status == "check":
-                    raise HTTPException(400, "объект находится на проверке")
-                await self.uow.objects.update(title=object.title, description=object.description, photo=object.photo,
+                """if object.status == "check":
+                    raise HTTPException(400, "объект находится на проверке")"""
+                await self.uow.objects.update(title=object.title, file=object.file,
                                               id=object.id, user_id=object.user_id)
                 await self.uow.commit()
             else:
@@ -52,8 +51,8 @@ class ObjectService:
     """async def get_all_public_objects(self):
         async with self.uow:
             objects = await self.uow.objects.find_all_public_objects()
-            return [AllObjectReturn.model_validate(i) for i in objects]
-"""
+            return [AllObjectReturn.model_validate(i) for i in objects]"""
+
     async def get_all_user_objects(self, user_id: int, user: int):
         async with self.uow:
             if user_id != user:
@@ -61,12 +60,12 @@ class ObjectService:
             objects = await self.uow.objects.find_all_user_objects(user_id)
             return [ObjectReturn.model_validate(i) for i in objects]
 
-    async def get_all_user_public_objects(self, user_id: int):
+    """async def get_all_user_public_objects(self, user_id: int):
         async with self.uow:
             objects = await self.uow.objects.find_all_user_public_objects(user_id)
-            return [ObjectReturn.model_validate(i) for i in objects]
+            return [ObjectReturn.model_validate(i) for i in objects]"""
 
-    async def publication_request(self, object_id: int, user_id: int):
+    """async def publication_request(self, object_id: int, user_id: int):
         async with self.uow:
             db_object = await self.uow.objects.find_by_id_private(object_id)
             if not db_object:
@@ -79,11 +78,11 @@ class ObjectService:
                 await self.uow.objects.change_status(object_id, "check")
                 await self.uow.commit()
             else:
-                raise HTTPException(403, "Пользователь не является владельцем объекта")
+                raise HTTPException(403, "Пользователь не является владельцем объекта")"""
 
     async def delete_object(self, object_id: int, user_id: int):
         async with self.uow:
-            db_object = await self.uow.objects.find_by_id_private(object_id)
+            db_object = await self.uow.objects.find_by_id(object_id)
             if not db_object:
                 raise HTTPException(400, "Такого объекта не существует")
             if db_object.user_id != user_id:

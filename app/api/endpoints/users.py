@@ -49,7 +49,7 @@ async def login(
 
 @router.post("/docs/login")
 async def docs_login(
-        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service) # noqa
+        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service),
 ) -> UserLogInResponse:  # noqa
     access_token, refresh_token = await user_service.login(email=user.username, password=user.password)
     response = UserLogInResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")
@@ -58,7 +58,8 @@ async def docs_login(
 
 @router.get("/me")
 async def me(
-        jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service), # noqa
+        jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service),
+        # noqa
 ) -> UserGetResponse:
     resp = await user_service.get_me(token=jwt_access)
     return resp
@@ -84,3 +85,9 @@ async def update_user(jwt_access: Annotated[str, Depends(get_jwt_payload)], user
                       user_service: UserService = Depends(get_user_service)):  # noqa
     await user_service.update_user(int(jwt_access["sub"]), user)
     return
+
+
+@router.post("/get_premium")
+async def get_premium(jwt_access: Annotated[str, Depends(get_jwt_payload)], tier: int,  # noqa
+                      user_service: UserService = Depends(get_user_service)):  # noqa
+    await user_service.add_privelegy(id=int(jwt_access["sub"]), tier=tier)

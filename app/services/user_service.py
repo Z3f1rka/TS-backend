@@ -70,3 +70,12 @@ class UserService:
                 raise HTTPException(400, "Такого пользователя не существует")
             await self.uow.users.update_user(id=id, username=user.username, email=user.email, avatar=user.avatar)
             await self.uow.commit()
+
+    async def add_privelegy(self, id: int, tier: int):
+        async with self.uow:
+            try:
+                await self.uow.users.find_one(id=id)
+            except Exception:
+                raise HTTPException(400, "Такого пользователя не существует")
+            await self.uow.users.add_privelegy(id=id, tier=tier)
+            await self.uow.commit()

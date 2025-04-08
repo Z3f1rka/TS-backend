@@ -17,7 +17,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
-    # role: Mapped[str] = mapped_column(String, nullable=False)
+    role: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
     avatar: Mapped[str] = mapped_column(String, nullable=True)
     sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")

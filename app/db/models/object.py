@@ -23,7 +23,7 @@ class Object(Base):
     # photo: Mapped[str] = mapped_column(String, nullable=True)
     file: Mapped[str] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=datetime.utcnow())
-    main_object_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    main_object_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"))
     user = relationship("User", back_populates="objects")

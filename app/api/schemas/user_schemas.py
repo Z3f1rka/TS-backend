@@ -51,3 +51,8 @@ class UserFavoritesGet(BaseModel):
     user_id: int
     object_id: int
     object: ObjectReturn
+
+
+class FeedbackCreate(BaseModel):
+    text: str
+    email: EmailStr

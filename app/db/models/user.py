@@ -23,3 +23,4 @@ class User(Base):
     avatar: Mapped[str] = mapped_column(String, nullable=True)
     sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")
     objects = relationship("Object", back_populates="user", cascade="all, delete-orphan")
+    feedbacks = relationship("Feedback", back_populates="user", cascade="all, delete-orphan")

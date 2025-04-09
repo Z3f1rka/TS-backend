@@ -75,12 +75,12 @@ class ObjectRepository(Repository):
         return [i for i in object]"""
 
     async def find_all_user_objects(self, user_id):
-        stmt = select(self.model.id).where(self.model.user_id == user_id)
+        stmt = select(self.model.main_object_id).where(self.model.user_id == user_id)
         object_id = await self.session.execute(stmt)
         object_id = object_id.scalars().all()
         objects = []
         for id in object_id:
-            stmt = select(self.model).where(self.model.id == id)
+            stmt = select(self.model).where(self.model.main_object_id == id).order_by(self.model.version.desc())
             object = await self.session.execute(stmt)
             object = object.scalars().first()
             objects.append(object)

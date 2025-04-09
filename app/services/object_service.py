@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 
-from app.api.schemas.object_schemas import ObjectReturn, AllObjectReturn
+from app.api.schemas.object_schemas import AllObjectReturn
+from app.api.schemas.object_schemas import ObjectReturn
 from app.api.schemas.object_schemas import ObjectUpdateParameters
 from app.utils.unitofwork import IUnitOfWork
 
@@ -30,7 +31,6 @@ class ObjectService:
                     raise HTTPException(403, "Пользователь не является владельцем объекта")
             else:
                 raise HTTPException(400, "Такого объекта не существует")
-                    
 
     """async def get_public_object_by_id(self, id: int):
         async with self.uow:

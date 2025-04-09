@@ -5,7 +5,7 @@ from fastapi import Depends
 from fastapi import Query
 from fastapi import status
 
-# from app.api.schemas import AllObjectReturn
+from app.api.schemas import AllObjectReturn
 from app.api.schemas import ObjectCreateParameters
 from app.api.schemas import ObjectReturn
 from app.api.schemas import ObjectUpdateParameters
@@ -35,14 +35,23 @@ async def update(jwt_access: Annotated[str, Depends(get_jwt_payload)], object: O
     await service.update(object, int(jwt_access["sub"]))
 
 
-"""@router.get("/get_by_id_private")
+@router.get("/get_by_id_one")
 async def get_private(object_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)],
                       service: ObjectService = Depends(get_object_service)) -> ObjectReturn:  # noqa
-    object = await service.get_private_object_by_id(object_id, user_id=int(jwt_access["sub"]))
+    """Поиск одного объекта по main_object_id"""
+    object = await service.get_one_object_by_id(object_id, user_id=int(jwt_access["sub"]))
     return object
 
 
-@router.get("/get_by_id_public")
+@router.get("/get_by_id_all_versions")
+async def get_by_id_all_versions(object_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)],
+                      service: ObjectService = Depends(get_object_service)) -> list[AllObjectReturn]:  # noqa
+    """Поиск всех версий объекта по main_object_id"""
+    objects = await service.get_versions_by_id(object_id, user_id=int(jwt_access["sub"]))
+    return objects
+
+
+"""@router.get("/get_by_id_public")
 async def get_public(object_id: int, service: ObjectService = Depends(get_object_service)) -> ObjectReturn:  # noqa
     object = await service.get_public_object_by_id(object_id)
     return object

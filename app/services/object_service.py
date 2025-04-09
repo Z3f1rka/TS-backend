@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from app.api.schemas.object_schemas import ObjectReturn
+from app.api.schemas.object_schemas import ObjectReturn, AllObjectReturn
 from app.api.schemas.object_schemas import ObjectUpdateParameters
 from app.utils.unitofwork import IUnitOfWork
 
@@ -9,9 +9,9 @@ class ObjectService:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    """async def get_private_object_by_id(self, id: int, user_id: int):
+    async def get_one_object_by_id(self, id: int, user_id: int):
         async with self.uow:
-            object = await self.uow.objects.find_by_id_private(id)
+            object = await self.uow.objects.find_by_main_object_id(id)
             if object:
                 if object.user_id == user_id:
                     return ObjectReturn.model_validate(object)
@@ -20,7 +20,19 @@ class ObjectService:
             else:
                 raise HTTPException(400, "Такого объекта не существует")
 
-    async def get_public_object_by_id(self, id: int):
+    async def get_versions_by_id(self, id: int, user_id: int):
+        async with self.uow:
+            objects = await self.uow.objects.find_all_by_main_object_id(id)
+            if objects:
+                if objects[0].user_id == user_id:
+                    return [AllObjectReturn.model_validate(i) for i in objects]
+                else:
+                    raise HTTPException(403, "Пользователь не является владельцем объекта")
+            else:
+                raise HTTPException(400, "Такого объекта не существует")
+                    
+
+    """async def get_public_object_by_id(self, id: int):
         async with self.uow:
             object = await self.uow.objects.find_by_id_public(id)
             if not object:

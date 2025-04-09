@@ -1,5 +1,7 @@
-from sqlalchemy import BigInteger, String
-from sqlalchemy import ForeignKey, Text
+from sqlalchemy import BigInteger
+from sqlalchemy import ForeignKey
+from sqlalchemy import String
+from sqlalchemy import Text
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship  # noqa

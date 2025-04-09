@@ -107,7 +107,7 @@ class UserService:
                 raise HTTPException(400, "Такого пользователя не существует")
             await self.uow.users.add_privelegy(id=id, tier=tier)
             await self.uow.commit()
-            
+
     async def feedback(self, id: int, text: str, email: str):
         async with self.uow:
             try:

@@ -7,13 +7,14 @@ from fastapi import status
 from fastapi.params import Header
 from fastapi.security import OAuth2PasswordRequestForm
 
+from app.api.schemas import FeedbackCreate
 from app.api.schemas import UserCreateParameters
 from app.api.schemas import UserCreateResponse
 from app.api.schemas import UserFavoritesGet
 from app.api.schemas import UserGetResponse
 from app.api.schemas import UserLogInParameters
 from app.api.schemas import UserLogInResponse
-from app.api.schemas import UserUpdateParameters, FeedbackCreate
+from app.api.schemas import UserUpdateParameters
 from app.services import UserService
 from app.utils import get_jwt_payload
 from app.utils import IUnitOfWork
@@ -117,7 +118,7 @@ async def get(user_id: int,  # noqa
 async def get_premium(jwt_access: Annotated[str, Depends(get_jwt_payload)], tier: int,  # noqa
                       user_service: UserService = Depends(get_user_service)):  # noqa
     await user_service.add_privelegy(id=int(jwt_access["sub"]), tier=tier)
-    
+
 
 @router.post('/feedback')
 async def feedback(jwt_access: Annotated[str, Depends(get_jwt_payload)], feedback: FeedbackCreate,  # noqa

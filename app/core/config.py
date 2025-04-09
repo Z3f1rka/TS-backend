@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     ENCRYPT_ALG: str
     API_HOST: str
     API_PORT: int
-    PREFIX: str
+    OPENAPI_URL: str
     model_config = SettingsConfigDict(env_file=".env")
 
     @property

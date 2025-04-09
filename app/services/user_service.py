@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import NoResultFound
 
 from app.api.schemas import UserFavoritesGet
-from app.api.schemas import UserGetResponse
+from app.api.schemas import UserGetResponse, UserUpdateParameters
 from app.utils import create_token
 from app.utils import verify_password
 from app.utils.unitofwork import IUnitOfWork
@@ -115,4 +115,13 @@ class UserService:
             except Exception:
                 raise HTTPException(400, "Такого пользователя не существует")
             await self.uow.users.feedback(id=id, text=text, email=email)
+            await self.uow.commit()
+
+    async def update_user(self, id: int, user: UserUpdateParameters):
+        async with self.uow:
+            try:
+                await self.uow.users.find_one(id=id)
+            except Exception:
+                raise HTTPException(400, "Такого пользователя не существует")
+            await self.uow.users.update_user(id=id, username=user.username, email=user.email, avatar=user.avatar)
             await self.uow.commit()

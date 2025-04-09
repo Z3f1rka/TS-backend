@@ -4,3 +4,5 @@ from .models.favorites import Favorites
 from .models.object import Object
 from .models.session import Session
 from .models.user import User
+from .models.feedback import Feedback
+from .models.favorites import Favorites

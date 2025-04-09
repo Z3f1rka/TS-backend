@@ -6,7 +6,7 @@ from sqlalchemy.exc import NoResultFound
 
 from app.db import Favorites
 from app.db import Object
-from app.db import User
+from app.db import User, Feedback
 from app.repositories.basic_repo import Repository
 from app.utils import get_password_hash
 
@@ -76,3 +76,8 @@ class UserRepository(Repository):
         user = (await self.session.execute(stmt)).scalars().first()
         user.role = "tier" + str(tier)
         self.session.add(user)
+
+    async def feedback(self, id: int, text: str, email: str):
+        stmt = insert(Feedback).values(user_id=id, text=text, email=email)
+        await self.session.execute(stmt)
+        

@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi import HTTPException
 from fastapi import Query
 from fastapi import status
 
@@ -45,7 +46,7 @@ async def get_private(object_id: int, jwt_access: Annotated[str, Depends(get_jwt
 
 @router.get("/get_by_id_all_versions")
 async def get_by_id_all_versions(object_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)],
-                      service: ObjectService = Depends(get_object_service)) -> list[AllObjectReturn]:  # noqa
+                                 service: ObjectService = Depends(get_object_service)) -> list[AllObjectReturn]:  # noqa
     """Поиск всех версий объекта по main_object_id"""
     objects = await service.get_versions_by_id(object_id, user_id=int(jwt_access["sub"]))
     return objects
@@ -65,7 +66,7 @@ async def get_all_objects(service: ObjectService = Depends(get_object_service)) 
 
 @router.get('/all_user_objects')
 async def get_all_user_objects(user_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)],
-                              service: ObjectService = Depends(get_object_service)) -> list[ # noqa
+                               service: ObjectService = Depends(get_object_service)) -> list[  # noqa
     ObjectReturn]:  # noqa
     """Получение всех приватных и публичных объектов пользователя. Для запроса нужен токен."""
     objects = await service.get_all_user_objects(user_id=user_id, user=int(jwt_access["sub"]))
@@ -80,7 +81,17 @@ async def get_all_user_public_objects(user_id: int, service: ObjectService = Dep
 
 
 @router.delete('/delete_object')
-async def delete_object(jwt_access: Annotated[str, Depends(get_jwt_payload)], object_id: Annotated[int, Query()], # noqa
-                       service: ObjectService = Depends(get_object_service)): # noqa
+async def delete_object(jwt_access: Annotated[str, Depends(get_jwt_payload)], object_id: Annotated[int, Query()],
+                        # noqa
+                        service: ObjectService = Depends(get_object_service)):  # noqa
     """Удаление объекта"""
     await service.delete_object(object_id=object_id, user_id=int(jwt_access["sub"]))
+
+
+@router.post("/publication", status_code=status.HTTP_200_OK)
+async def publication(jwt_access: Annotated[dict, Depends(get_jwt_payload)], object_id: Annotated[int, Query()],  # noqa
+                      service: ObjectService = Depends(get_object_service)):
+    if jwt_access["role"] == "tier1":
+        raise HTTPException(403, "У пользователя нет премиум доступа")
+    else:
+        await service.publication_request(object_id, int(jwt_access["sub"]))

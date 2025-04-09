@@ -20,7 +20,7 @@ class Object(Base):
     title: Mapped[str] = mapped_column(String, nullable=False)
     # text: Mapped[str] = mapped_column(Text, nullable=True)
     # approved_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
-    # status: Mapped[str] = mapped_column(String, nullable=False, default='private')
+    status: Mapped[str] = mapped_column(String, nullable=False, default='private')
     # photo: Mapped[str] = mapped_column(String, nullable=True)
     file: Mapped[str] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=datetime.utcnow())

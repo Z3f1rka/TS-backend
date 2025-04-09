@@ -75,7 +75,8 @@ class ObjectRepository(Repository):
         return [i for i in object]"""
 
     async def find_all_user_objects(self, user_id):
-        stmt = select(self.model.main_object_id).where(self.model.user_id == user_id)
+        stmt = select(self.model.main_object_id).where(self.model.user_id == user_id).group_by(
+            self.model.main_object_id)
         object_id = await self.session.execute(stmt)
         object_id = object_id.scalars().all()
         objects = []

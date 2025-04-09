@@ -4,7 +4,7 @@ from sqlalchemy import BigInteger
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
-from sqlalchemy import String
+from sqlalchemy import String, JSON
 # from sqlalchemy import Text
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -22,7 +22,7 @@ class Object(Base):
     # approved_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     status: Mapped[str] = mapped_column(String, nullable=False, default='private')
     # photo: Mapped[str] = mapped_column(String, nullable=True)
-    file: Mapped[str] = mapped_column(String, nullable=True)
+    file: Mapped[dict] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=datetime.utcnow())
     main_object_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)

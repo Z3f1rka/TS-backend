@@ -18,7 +18,7 @@ class ObjectRepository(Repository):
         await self.session.commit()
         return object_id
 
-    async def update(self, title: str, id: int, user_id: int, file: str | None = None):
+    async def update(self, title: str, id: int, user_id: int, file: dict | None = None):
         stmt = select(self.model).where(self.model.main_object_id == id).order_by(self.model.version.desc())
         object = await self.session.execute(stmt)
         object = object.scalars().first()

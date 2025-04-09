@@ -8,7 +8,7 @@ from pydantic import ConfigDict
 class Object(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title: str
-    file: str | None = None
+    file: dict | None = None
 
 
 class ObjectCreateParameters(BaseModel):
@@ -37,7 +37,7 @@ class PrivateObjectReturn(ObjectReturn):
 class AllObjectReturn(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title: str
-    file: str | None = None
+    file: dict | None = None
     # photo: str | None = None
     id: int
     main_object_id: int

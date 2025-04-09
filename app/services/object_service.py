@@ -14,7 +14,7 @@ class ObjectService:
         async with self.uow:
             object = await self.uow.objects.find_by_main_object_id(id)
             if object:
-                if object.user_id == user_id:
+                if object.user_id == user_id or object.status == "public":
                     return ObjectReturn.model_validate(object)
                 else:
                     raise HTTPException(403, "Пользователь не является владельцем объекта")
@@ -77,20 +77,18 @@ class ObjectService:
             objects = await self.uow.objects.find_all_user_public_objects(user_id)
             return [ObjectReturn.model_validate(i) for i in objects]"""
 
-    """async def publication_request(self, object_id: int, user_id: int):
+    async def publication_request(self, object_id: int, user_id: int):
         async with self.uow:
             db_object = await self.uow.objects.find_by_id_private(object_id)
             if not db_object:
                 raise HTTPException(400, "Такого объекта не существует")
-            if db_object.status == "check":
-                raise HTTPException(400, "объект находится на проверке")
             if db_object.user_id == user_id:
                 if db_object.status == "public":
                     raise HTTPException(400, "объект уже опубликован")
-                await self.uow.objects.change_status(object_id, "check")
+                await self.uow.objects.change_status(object_id, "public")
                 await self.uow.commit()
             else:
-                raise HTTPException(403, "Пользователь не является владельцем объекта")"""
+                raise HTTPException(403, "Пользователь не является владельцем объекта")
 
     async def delete_object(self, object_id: int, user_id: int):
         async with self.uow:

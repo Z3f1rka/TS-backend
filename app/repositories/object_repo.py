@@ -45,20 +45,13 @@ class ObjectRepository(Repository):
         objects = objects.scalars().all()
         return objects
 
-    """async def find_by_id_private(self, object_id: int):
+    async def find_by_id_private(self, object_id: int):
         stmt = select(self.model).where(self.model.id == object_id)
         object = await self.session.execute(stmt)
         object = object.scalars().first()
-        stmt = select(Comment).where(Comment.object_id == object_id, Comment.type == "public")
-        comments = await self.session.execute(stmt)
-        comments = comments.scalars().all()
-        if comments:
-            comments = [(i.created_at, i.rating) for i in comments]
-            for i in object:
-                i.rating = rating_calculation(comments)
         return object
 
-    async def find_by_id_public(self, object_id: int):
+    """async def find_by_id_public(self, object_id: int):
         stmt = select(self.model).where(self.model.id == object_id,
                                         self.model.status == "public")
         object = await self.session.execute(stmt)
@@ -101,9 +94,9 @@ class ObjectRepository(Repository):
                 for_return.append(object)
         return for_return"""
 
-    """async def change_status(self, id: int, status: str):
+    async def change_status(self, id: int, status: str):
         stmt = select(self.model).where(self.model.id == id)
         object = await self.session.execute(stmt)
         object = object.scalars().first()
         object.status = status
-        self.session.add(object)"""
+        self.session.add(object)

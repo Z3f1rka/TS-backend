@@ -2,7 +2,8 @@ from fastapi import HTTPException
 from sqlalchemy.exc import NoResultFound
 
 from app.api.schemas import UserFavoritesGet
-from app.api.schemas import UserGetResponse, UserUpdateParameters
+from app.api.schemas import UserGetResponse
+from app.api.schemas import UserUpdateParameters
 from app.utils import create_token
 from app.utils import verify_password
 from app.utils.unitofwork import IUnitOfWork
@@ -15,8 +16,8 @@ class UserService:
     async def register(self, username: str, email: str, password: str):
         async with self.uow:
             user_id = await self.uow.users.add_user(username=username, email=email, password=password)
-            access_token = create_token("access", user_id, "user")
-            refresh_token = create_token("refresh", user_id, "user")
+            access_token = create_token("access", user_id, "tier1")
+            refresh_token = create_token("refresh", user_id, "tier1")
             await self.uow.commit()
             await self.uow.sessions.add_token(user_id=user_id, jwt=refresh_token)
             await self.uow.commit()

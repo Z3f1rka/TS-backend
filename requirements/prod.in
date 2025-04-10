@@ -1,0 +1,7 @@
+fastapi[all]==0.115.8
+alembic==1.14.1
+PyJWT==2.10.1
+SQLAlchemy==2.0.37
+asyncpg==0.30.0
+passlib[bcrypt]==1.7.4
+psycopg2-binary==2.9.10
